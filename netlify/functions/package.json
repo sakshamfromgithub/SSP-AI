@@ -1,7 +1,0 @@
-{
-  "name": "ssp-ai-gemini",
-  "private": true,
-  "dependencies": {
-    "@google/generative-ai": "^0.24.0"
-  }
-}
