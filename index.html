@@ -46,7 +46,7 @@
       </select>
     </div>
 
-    <textarea id="q" placeholder="Apna doubt likho... (example: 'Ohm law simple me samjhao')"></textarea>
+    <textarea id="q" placeholder="Type your doubt here... (example: 'Ohm law simple me samjhao')"></textarea>
 
     <div class="row">
       <button id="askBtn">Ask SSP AI</button>
@@ -78,7 +78,7 @@
     if(!message){ alert("Bhai question likho 🙂"); return; }
 
     addMsg("You: " + message, "user");
-    statusEl.textContent = "SSP AI soch raha hai...";
+    statusEl.textContent = "SSP AI Thinking...";
 
     try{
       const res = await fetch("/.netlify/functions/ask", {
