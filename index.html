@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Saksham Study Point AI</title>
+  <style>
+    body{margin:0;font-family:Arial;background:#120709;color:#fff}
+    .wrap{max-width:860px;margin:18px auto;padding:14px}
+    .card{background:#1e0c10;border:1px solid #3a141d;border-radius:14px;padding:14px}
+    h1{margin:0 0 10px;font-size:20px;color:#ffdde6}
+    .row{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
+    select,textarea,button{
+      border-radius:12px;border:1px solid #3a141d;padding:10px;outline:none;
+      background:#14090b;color:#fff
+    }
+    textarea{width:100%;min-height:120px;resize:vertical}
+    button{cursor:pointer;background:#7a0f26;border:none;padding:12px 14px;font-weight:bold}
+    button:hover{filter:brightness(1.08)}
+    .chat{margin-top:12px;padding:12px;border-radius:12px;background:#120709;border:1px dashed #3a141d}
+    .msg{padding:10px 12px;border-radius:12px;margin:8px 0;line-height:1.45;white-space:pre-wrap}
+    .user{background:#2a0e15}
+    .ai{background:#0f1a16;border:1px solid #1e3b2f}
+    .small{opacity:.85;font-size:12px;margin-top:6px}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1>🤖 Saksham Study Point AI</h1>
+
+    <div class="row">
+      <select id="grade">
+        <option value="">Class (optional)</option>
+        <option>9</option><option>10</option><option>11</option><option>12</option>
+        <option>JEE</option><option>NEET</option>
+      </select>
+      <select id="subject">
+        <option value="">Subject (optional)</option>
+        <option>Physics</option><option>Chemistry</option><option>Maths</option><option>Biology</option>
+      </select>
+      <select id="lang">
+        <option value="hinglish">Hinglish</option>
+        <option value="hindi">Hindi</option>
+        <option value="english">English</option>
+      </select>
+    </div>
+
+    <textarea id="q" placeholder="Apna doubt likho... (example: 'Ohm law simple me samjhao')"></textarea>
+
+    <div class="row">
+      <button id="askBtn">Ask SSP AI</button>
+      <div class="small" id="status"></div>
+    </div>
+
+    <div class="chat" id="chat"></div>
+  </div>
+</div>
+
+<script>
+  const chat = document.getElementById("chat");
+  const statusEl = document.getElementById("status");
+
+  function addMsg(text, cls){
+    const div = document.createElement("div");
+    div.className = "msg " + cls;
+    div.textContent = text;
+    chat.appendChild(div);
+    chat.scrollTop = chat.scrollHeight;
+  }
+
+  document.getElementById("askBtn").addEventListener("click", async () => {
+    const message = document.getElementById("q").value.trim();
+    const grade = document.getElementById("grade").value;
+    const subject = document.getElementById("subject").value;
+    const language = document.getElementById("lang").value;
+
+    if(!message){ alert("Bhai question likho 🙂"); return; }
+
+    addMsg("You: " + message, "user");
+    statusEl.textContent = "SSP AI soch raha hai...";
+
+    try{
+      const res = await fetch("/.netlify/functions/ask", {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({ message, grade, subject, language })
+      });
+      const data = await res.json();
+      addMsg("SSP AI: " + (data.reply || "Reply nahi aaya"), "ai");
+    }catch(e){
+      addMsg("SSP AI: Network issue 😅", "ai");
+    }finally{
+      statusEl.textContent = "";
+      document.getElementById("q").value = "";
+    }
+  });
+</script>
+</body>
+</html>
