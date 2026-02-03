@@ -75,7 +75,7 @@
     const subject = document.getElementById("subject").value;
     const language = document.getElementById("lang").value;
 
-    if(!message){ alert("Bhai question likho 🙂"); return; }
+    if(!message){ alert("please type question"); return; }
 
     addMsg("You: " + message, "user");
     statusEl.textContent = "SSP AI Thinking...";
