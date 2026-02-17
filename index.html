@@ -112,16 +112,17 @@
     .ghost:hover{background: rgba(255,255,255,.06)}
 
     /* ===== Chat Card ===== */
-    .chatWrap{
-      flex:1;
-      background: var(--card);
-      border:1px solid var(--border);
-      border-radius: var(--r);
-      overflow:hidden;
-      display:flex;
-      flex-direction:column;
-      min-height: 60vh;
-    }
+   .chatWrap{
+  flex:1;
+  background: var(--card);
+  border:1px solid var(--border);
+  border-radius: var(--r);
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  min-height: 60vh;
+  position: relative; /* add */
+}
 
     .chatHeader{
       padding:10px;
@@ -159,11 +160,12 @@
     }
 
     .chat{
-      flex:1;
-      padding:12px;
-      overflow:auto;
-      background: transparent;
-    }
+  flex:1;
+  padding:12px;
+  overflow:auto;
+  background: transparent;
+  padding-bottom: 88px; /* add: composer ke liye space */
+}
 
     .rowMsg{
       display:flex;
@@ -212,13 +214,18 @@
 
     /* ===== Composer ===== */
     .composer{
-      padding:10px;
-      border-top:1px solid var(--border);
-      background: var(--card2);
-      display:flex;
-      gap:10px;
-      align-items:flex-end;
-    }
+  position: sticky;   /* add */
+  bottom: 0;          /* add */
+  left: 0;
+  right: 0;
+  z-index: 5;         /* add */
+  padding:10px;
+  border-top:1px solid var(--border);
+  background: var(--card2);
+  display:flex;
+  gap:10px;
+  align-items:flex-end;
+}
     textarea{
       width:100%;
       min-height:44px;
@@ -284,6 +291,7 @@
       .bubble{max-width: 92%}
       .composer{gap:8px}
       .send{padding:0 12px}
+      .chat{ padding-bottom: 96px; }
     }
   </style>
 </head>
