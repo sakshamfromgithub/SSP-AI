@@ -8,21 +8,20 @@
   <style>
     :root{
       --bg:#0f0608;
-      --panel:#14090b;
-      --panel2:#1a0b0f;
-      --border:#3a141d;
+      --card:#14090b;
+      --card2:#120709;
+      --border:#2b1218;
 
-      --text:#ffffff;
+      --text:#fff;
       --muted:rgba(255,255,255,.72);
 
       --brand:#7a0f26;
       --brand2:#b3123a;
 
-      --user:#2a0e15;
-      --ai:#0f141f;
+      --user:#231016;
+      --ai:#121826;
 
-      --shadow: 0 18px 50px rgba(0,0,0,.35);
-      --radius:18px;
+      --r:14px;
     }
 
     *{box-sizing:border-box}
@@ -30,244 +29,228 @@
     body{
       margin:0;
       font-family: Arial, sans-serif;
-      background:
-        radial-gradient(1100px 500px at 15% 0%, rgba(179,18,58,.18), transparent 60%),
-        radial-gradient(900px 420px at 100% 0%, rgba(122,15,38,.16), transparent 55%),
-        var(--bg);
+      background: var(--bg);
       color:var(--text);
     }
-
     ::-webkit-scrollbar{width:0;height:0}
 
     .app{
       max-width: 980px;
-      margin: 0 auto;
-      height: 100%;
-      padding: 14px;
+      margin:0 auto;
+      min-height:100%;
+      padding:12px;
       display:flex;
       flex-direction:column;
-      gap:12px;
+      gap:10px;
     }
 
-    /* ===== Header ===== */
+    /* ===== Top Bar (clean) ===== */
     .topbar{
-      background: rgba(26,11,15,.78);
+      background: var(--card);
       border:1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 12px 12px;
+      border-radius: var(--r);
+      padding:10px;
       display:flex;
       align-items:center;
       justify-content:space-between;
       gap:10px;
-      backdrop-filter: blur(10px);
     }
+
     .brand{
       display:flex;
       align-items:center;
       gap:10px;
-      min-width: 220px;
+      min-width: 160px;
     }
     .logo{
-      width:40px;height:40px;border-radius:12px;
-      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.14), transparent 55%),
-                  linear-gradient(135deg, var(--brand2), var(--brand));
-      border:1px solid rgba(255,255,255,.10);
+      width:36px;height:36px;
+      border-radius:10px;
+      background: var(--brand);
       display:grid;
       place-items:center;
-      box-shadow: 0 10px 28px rgba(179,18,58,.20);
+      font-size:16px;
       flex:0 0 auto;
     }
-    .brand h1{
-      margin:0;
-      font-size:15px;
-      line-height:1.2;
+    .brandTitle{
+      line-height:1.1;
+    }
+    .brandTitle b{
+      display:block;
+      font-size:14px;
       letter-spacing:.2px;
     }
-    .brand p{
-      margin:2px 0 0;
+    .brandTitle span{
+      display:block;
       font-size:12px;
-      color: var(--muted);
+      color:var(--muted);
+      margin-top:3px;
     }
 
     .filters{
       display:flex;
       gap:8px;
-      flex-wrap:wrap;
       align-items:center;
       justify-content:flex-end;
+      flex-wrap:wrap;
     }
+
     select, button{
       border-radius: 12px;
       border:1px solid var(--border);
       padding:10px 10px;
       outline:none;
-      background: rgba(20,9,11,.9);
+      background: var(--card2);
       color: var(--text);
-      font-size: 13px;
+      font-size:13px;
     }
-    select{
-      padding:10px 12px;
-      min-width: 140px;
-    }
+    select{min-width:140px}
+
     .ghost{
       background: transparent;
-    }
-    .btn{
       cursor:pointer;
-      border:none;
-      background: linear-gradient(135deg, var(--brand2), var(--brand));
-      font-weight: bold;
-      padding:10px 12px;
-      box-shadow: 0 12px 26px rgba(179,18,58,.22);
     }
-    .btn:hover{filter:brightness(1.08)}
     .ghost:hover{background: rgba(255,255,255,.06)}
 
-    /* ===== Chat Panel ===== */
+    /* ===== Chat Card ===== */
     .chatWrap{
       flex:1;
-      background: rgba(26,11,15,.70);
+      background: var(--card);
       border:1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
+      border-radius: var(--r);
       overflow:hidden;
       display:flex;
       flex-direction:column;
-      backdrop-filter: blur(10px);
+      min-height: 60vh;
     }
 
     .chatHeader{
-      padding: 10px 12px;
-      border-bottom:1px solid rgba(58,20,29,.65);
+      padding:10px;
+      border-bottom:1px solid var(--border);
       display:flex;
       align-items:center;
       justify-content:space-between;
       gap:10px;
-      background: rgba(15,6,8,.35);
+      background: transparent;
     }
-    .status{
-      font-size:12px;
-      color: var(--muted);
+
+    .leftHeader{
       display:flex;
       align-items:center;
-      gap:8px;
+      gap:10px;
+      min-width: 0;
     }
+
     .pill{
       font-size:12px;
       padding:6px 10px;
       border-radius:999px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
-      color: rgba(255,255,255,.80);
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      color: rgba(255,255,255,.85);
       white-space:nowrap;
+    }
+    .hint{
+      font-size:12px;
+      color:var(--muted);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width: 52vw;
     }
 
     .chat{
       flex:1;
-      padding: 14px;
+      padding:12px;
       overflow:auto;
+      background: transparent;
     }
 
     .rowMsg{
       display:flex;
-      gap:10px;
       margin: 10px 0;
-      align-items:flex-end;
     }
     .rowMsg.user{justify-content:flex-end}
     .rowMsg.ai{justify-content:flex-start}
 
     .bubble{
-      max-width: 78%;
-      padding: 10px 12px;
-      border-radius: 16px;
-      line-height: 1.45;
-      font-size: 14px;
-      white-space: pre-wrap;
+      max-width: 80%;
+      padding:10px 12px;
+      border-radius: 14px;
+      line-height:1.45;
+      font-size:14px;
       border:1px solid rgba(255,255,255,.08);
-      position:relative;
+      white-space:pre-wrap;
     }
     .rowMsg.user .bubble{
-      background: rgba(42,14,21,.92);
-      border-color: rgba(179,18,58,.18);
+      background: var(--user);
       border-bottom-right-radius: 8px;
     }
     .rowMsg.ai .bubble{
-      background: rgba(15,20,31,.85);
-      border-color: rgba(255,255,255,.10);
+      background: var(--ai);
       border-bottom-left-radius: 8px;
     }
 
     .meta{
-      font-size: 11px;
-      color: rgba(255,255,255,.60);
-      margin-top: 6px;
+      margin-top:6px;
       display:flex;
-      gap:10px;
       align-items:center;
       justify-content:space-between;
+      gap:10px;
+      font-size:11px;
+      color: rgba(255,255,255,.60);
     }
 
     .iconBtn{
       cursor:pointer;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.04);
       color: rgba(255,255,255,.85);
-      padding: 6px 9px;
-      border-radius: 10px;
-      font-size: 12px;
+      padding:6px 10px;
+      border-radius:10px;
+      font-size:12px;
     }
-    .iconBtn:hover{filter:brightness(1.08)}
 
     /* ===== Composer ===== */
     .composer{
-      border-top:1px solid rgba(58,20,29,.65);
-      padding: 10px;
-      background: rgba(15,6,8,.30);
+      padding:10px;
+      border-top:1px solid var(--border);
+      background: var(--card2);
       display:flex;
       gap:10px;
       align-items:flex-end;
     }
     textarea{
       width:100%;
-      min-height: 44px;
-      max-height: 140px;
+      min-height:44px;
+      max-height:140px;
       resize:none;
-      border-radius: 14px;
-      border:1px solid rgba(58,20,29,.9);
-      padding: 11px 12px;
+      border-radius: 12px;
+      border:1px solid var(--border);
+      padding:11px 12px;
       outline:none;
-      background: rgba(20,9,11,.92);
+      background: #0f0608;
       color: var(--text);
-      font-size: 14px;
+      font-size:14px;
       line-height:1.3;
     }
     textarea::placeholder{color: rgba(255,255,255,.55)}
+
     .send{
       height:44px;
-      padding: 0 14px;
-      border-radius: 14px;
+      padding:0 14px;
+      border-radius: 12px;
       border:none;
       cursor:pointer;
-      background: linear-gradient(135deg, var(--brand2), var(--brand));
-      font-weight: bold;
-      box-shadow: 0 12px 26px rgba(179,18,58,.22);
+      font-weight:bold;
+      background: var(--brand);
       color:#fff;
+      flex:0 0 auto;
     }
-    .send:disabled{
-      cursor:not-allowed;
-      filter: grayscale(.2);
-      opacity:.65;
-    }
+    .send:hover{filter:brightness(1.08)}
+    .send:disabled{opacity:.65; cursor:not-allowed}
 
     /* typing dots */
-    .dots{
-      display:inline-flex;
-      gap:4px;
-      align-items:center;
-      padding: 2px 0;
-    }
+    .dots{display:inline-flex;gap:4px;align-items:center}
     .dot{
       width:6px;height:6px;border-radius:999px;
       background: rgba(255,255,255,.65);
@@ -280,12 +263,27 @@
       40%{transform: translateY(-5px); opacity:1}
     }
 
-    /* responsive */
-    @media(max-width:640px){
+    /* ===== Mobile friendly ===== */
+    @media (max-width:640px){
       .app{padding:10px}
-      select{min-width: 120px}
-      .bubble{max-width: 88%}
-      .brand{min-width: 0}
+      .topbar{
+        flex-direction:column;
+        align-items:stretch;
+      }
+      .brand{min-width:0}
+      .filters{
+        width:100%;
+        display:grid;
+        grid-template-columns: 1fr 1fr;
+        gap:8px;
+      }
+      .filters select{min-width:0;width:100%}
+      #lang{grid-column: 1 / 2;}
+      #clearBtn{grid-column: 2 / 3;}
+      .hint{max-width: 56vw;}
+      .bubble{max-width: 92%}
+      .composer{gap:8px}
+      .send{padding:0 12px}
     }
   </style>
 </head>
@@ -296,9 +294,9 @@
     <div class="topbar">
       <div class="brand">
         <div class="logo">🤖</div>
-        <div>
-          <h1>SSP AI</h1>
-          <p>clear your doubts...</p>
+        <div class="brandTitle">
+          <b>SSP AI</b>
+          <span>Clear your doubts…</span>
         </div>
       </div>
 
@@ -320,17 +318,17 @@
           <option value="english">English</option>
         </select>
 
-        <button class="ghost" id="clearBtn" title="Clear chat">Clear</button>
+        <button class="ghost" id="clearBtn">Clear</button>
       </div>
     </div>
 
     <div class="chatWrap">
       <div class="chatHeader">
-        <div class="status" id="status">
+        <div class="leftHeader">
           <span class="pill" id="modePill">Ready</span>
-          <span id="hint">Enter to send, Shift+Enter for new line</span>
+          <span class="hint">Enter to send, Shift+Enter for new line</span>
         </div>
-        <button class="ghost" id="scrollBtn" title="Jump to latest">Latest</button>
+        <button class="ghost" id="scrollBtn">Latest</button>
       </div>
 
       <div class="chat" id="chat"></div>
@@ -345,7 +343,6 @@
 
 <script>
   const chat = document.getElementById("chat");
-  const statusEl = document.getElementById("status");
   const modePill = document.getElementById("modePill");
   const askBtn = document.getElementById("askBtn");
   const qEl = document.getElementById("q");
@@ -353,11 +350,6 @@
   function nowTime(){
     const d = new Date();
     return d.toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
-  }
-
-  function escapeText(s){
-    // we are using textContent anyway, but keep it safe for future edits
-    return (s ?? "").toString();
   }
 
   function addMessage(text, who){
@@ -390,15 +382,15 @@
 
     meta.appendChild(time);
     meta.appendChild(copy);
-
     bubble.appendChild(meta);
+
     row.appendChild(bubble);
     chat.appendChild(row);
     chat.scrollTop = chat.scrollHeight;
   }
 
-  function setThinking(isThinking){
-    if(isThinking){
+  function setThinking(on){
+    if(on){
       modePill.textContent = "Thinking";
       askBtn.disabled = true;
       qEl.disabled = true;
@@ -417,7 +409,6 @@
 
     const bubble = document.createElement("div");
     bubble.className = "bubble";
-    bubble.textContent = "";
 
     const dots = document.createElement("span");
     dots.className = "dots";
@@ -434,7 +425,6 @@
     if(t) t.remove();
   }
 
-  // auto resize textarea
   function autoResize(){
     qEl.style.height = "auto";
     qEl.style.height = Math.min(qEl.scrollHeight, 140) + "px";
@@ -469,7 +459,7 @@
       removeTyping();
 
       const reply = (data && data.reply) ? data.reply : "Reply nahi aaya";
-      addMessage("SSP AI: " + escapeText(reply), "ai");
+      addMessage("SSP AI: " + reply, "ai");
 
     }catch(e){
       removeTyping();
@@ -481,7 +471,6 @@
 
   askBtn.addEventListener("click", ask);
 
-  // Enter to send, Shift+Enter for new line
   qEl.addEventListener("keydown", (e) => {
     if(e.key === "Enter" && !e.shiftKey){
       e.preventDefault();
@@ -498,7 +487,6 @@
     chat.scrollTop = chat.scrollHeight;
   });
 
-  // welcome
   addMessage("SSP AI: Hi! Apna doubt type karo. Class/Subject optional hai 🙂", "ai");
 </script>
 
