@@ -31,17 +31,18 @@
       font-family: Arial, sans-serif;
       background: var(--bg);
       color:var(--text);
+      overflow: hidden;
     }
     ::-webkit-scrollbar{width:0;height:0}
 
     .app{
       max-width: 980px;
-      margin:0 auto;
-      min-height:100%;
-      padding:12px;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
+  margin:0 auto;
+  height: 100vh;            /* change min-height -> height */
+  padding:12px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
     }
 
     /* ===== Top Bar (clean) ===== */
@@ -120,8 +121,11 @@
   overflow:hidden;
   display:flex;
   flex-direction:column;
-  min-height: 60vh;
+  min-height: 0;
   position: relative; /* add */
+
+  
+
 }
 
     .chatHeader{
@@ -165,6 +169,8 @@
   overflow:auto;
   background: transparent;
   padding-bottom: 88px; /* add: composer ke liye space */
+
+   min-height: 0;
 }
 
     .rowMsg{
@@ -214,17 +220,14 @@
 
     /* ===== Composer ===== */
     .composer{
-  position: sticky;   /* add */
-  bottom: 0;          /* add */
-  left: 0;
-  right: 0;
-  z-index: 5;         /* add */
+ 
   padding:10px;
   border-top:1px solid var(--border);
   background: var(--card2);
   display:flex;
   gap:10px;
   align-items:flex-end;
+
 }
     textarea{
       width:100%;
