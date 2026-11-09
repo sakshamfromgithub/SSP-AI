@@ -1,418 +1,329 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#4d1616">
-  <title>SSP AI — Saksham Study Point</title>
-  <style>
-    :root {
-      color-scheme: light;
-      --brand:#4d1616; --brand-hover:#642020; --brand-soft:#f7eeee;
-      --bg:#f7f7f8; --surface:#ffffff; --surface-2:#fbf9f9;
-      --text:#201b1b; --muted:#817777; --border:#eae4e4;
-      --user:#f5eeee; --shadow:0 12px 40px rgba(45,20,20,.07);
-      --sidebar-width:280px;
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%;margin:0}
-    body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);overflow:hidden}
-    button,input,textarea{font:inherit}
-    button{cursor:pointer}
-    .app{height:100dvh;display:flex;overflow:hidden}
-    .sidebar{width:var(--sidebar-width);flex:0 0 var(--sidebar-width);background:#fff;border-right:1px solid var(--border);display:flex;flex-direction:column;padding:18px 14px;z-index:30;transition:transform .25s ease}
-    .brand{display:flex;align-items:center;gap:11px;padding:4px 7px 22px}
-    .brand-mark{width:39px;height:39px;border-radius:12px;background:var(--brand);color:#fff;display:grid;place-items:center;font-weight:800;font-size:14px;letter-spacing:-.5px}
-    .brand-name{font-weight:750;font-size:15px;letter-spacing:-.3px}
-    .brand-sub{font-size:11px;color:var(--muted);margin-top:2px}
-    .new-chat{width:100%;display:flex;align-items:center;justify-content:center;gap:9px;border:0;border-radius:11px;background:var(--brand);color:#fff;padding:12px 14px;font-weight:650;transition:background .2s,transform .2s}
-    .new-chat:hover{background:var(--brand-hover);transform:translateY(-1px)}
-    .side-section{margin-top:23px;min-height:0;display:flex;flex-direction:column;flex:1}
-    .section-heading{display:flex;align-items:center;justify-content:space-between;padding:0 8px 9px;color:var(--muted);font-size:11px;font-weight:750;letter-spacing:.09em;text-transform:uppercase}
-    .search-wrap{position:relative;margin:0 2px 10px}
-    .search-wrap input{width:100%;border:1px solid var(--border);background:var(--surface-2);border-radius:9px;padding:9px 10px 9px 33px;outline:none;font-size:12px;color:var(--text)}
-    .search-wrap input:focus{border-color:#c9a6a6}
-    .search-icon{position:absolute;left:11px;top:9px;color:#9a8b8b;font-size:13px}
-    .history-list{overflow-y:auto;min-height:0;flex:1;padding-right:2px}
-    .history-empty{font-size:12px;color:#9b9090;text-align:center;padding:24px 10px;line-height:1.6}
-    .history-item{display:flex;align-items:center;gap:5px;margin:2px 0;padding:3px;border-radius:9px}
-    .history-item:hover,.history-item.active{background:#f6f1f1}
-    .history-open{min-width:0;flex:1;border:0;background:transparent;text-align:left;padding:8px 7px;color:#514747;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .history-item.active .history-open{color:var(--brand);font-weight:650}
-    .history-menu{width:28px;height:28px;border:0;border-radius:7px;background:transparent;color:#9a8f8f;opacity:0}
-    .history-item:hover .history-menu,.history-menu:focus{opacity:1}
-    .history-menu:hover{background:#eae0e0;color:var(--brand)}
-    .side-bottom{border-top:1px solid var(--border);padding-top:12px;margin-top:12px;display:grid;gap:5px}
-    .side-action{display:flex;align-items:center;gap:10px;border:0;background:transparent;border-radius:9px;padding:10px 9px;color:#625858;font-size:12px;text-align:left}
-    .side-action:hover{background:#f7f2f2;color:var(--brand)}
-    .privacy-note{font-size:10px;color:#a69b9b;line-height:1.5;padding:8px 9px 0}
-    .main{min-width:0;flex:1;display:flex;flex-direction:column;position:relative}
-    .topbar{height:64px;flex:0 0 64px;border-bottom:1px solid var(--border);background:rgba(255,255,255,.88);display:flex;align-items:center;justify-content:space-between;padding:0 25px;backdrop-filter:blur(12px);z-index:5}
-    .top-left{display:flex;align-items:center;gap:12px;min-width:0}
-    .mobile-menu{display:none}
-    .page-title{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .status{font-size:11px;color:#7d7777;display:flex;align-items:center;gap:6px}
-    .status-dot{width:7px;height:7px;border-radius:50%;background:#3ca66b}
-    .top-actions{display:flex;align-items:center;gap:8px}
-    .top-btn{border:1px solid var(--border);background:#fff;border-radius:9px;padding:8px 11px;color:#675b5b;font-size:11px}
-    .top-btn:hover{background:#faf5f5;border-color:#ddcaca}
-    .chat-scroll{flex:1;overflow-y:auto;min-height:0;scroll-behavior:smooth}
-    .chat-content{width:min(820px,100%);margin:0 auto;padding:35px 28px 28px}
-    .welcome{min-height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:35px 0 70px}
-    .welcome-logo{width:58px;height:58px;background:var(--brand);color:#fff;border-radius:18px;display:grid;place-items:center;font-size:20px;font-weight:800;box-shadow:0 9px 24px rgba(77,22,22,.17);margin-bottom:22px}
-    .welcome h1{font-size:clamp(25px,4vw,34px);letter-spacing:-1.1px;margin:0 0 10px;font-weight:750}
-    .welcome h1 span{color:var(--brand)}
-    .welcome p{max-width:490px;color:var(--muted);font-size:13px;line-height:1.7;margin:0}
-    .suggestions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;width:min(540px,100%);margin-top:29px}
-    .suggestion{border:1px solid var(--border);background:#fff;text-align:left;padding:13px 14px;border-radius:12px;color:#544949;font-size:12px;line-height:1.45;transition:.2s}
-    .suggestion:hover{border-color:#cdaaaa;background:#fdfafa;transform:translateY(-2px)}
-    .suggestion strong{display:block;color:var(--brand);font-size:12px;margin-bottom:4px}
-    .message{display:flex;gap:12px;margin:0 0 25px;align-items:flex-start}
-    .avatar{width:30px;height:30px;flex:0 0 30px;border-radius:10px;display:grid;place-items:center;font-size:10px;font-weight:800}
-    .message.user .avatar{background:#eee8e8;color:var(--brand)}
-    .message.ai .avatar{background:var(--brand);color:#fff}
-    .message-body{min-width:0;flex:1;padding-top:3px}
-    .message-author{font-size:11px;font-weight:750;color:#665a5a;margin-bottom:7px}
-    .message-text{font-size:13px;line-height:1.8;color:#302929;white-space:pre-wrap;overflow-wrap:anywhere}
-    .message.user .message-text{display:inline-block;background:var(--user);border:1px solid #eee4e4;border-radius:12px;padding:10px 13px;max-width:100%}
-    .message-tools{display:flex;gap:7px;margin-top:8px}
-    .message-tool{border:0;background:transparent;color:#9a8e8e;font-size:10px;padding:3px 0}
-    .message-tool:hover{color:var(--brand)}
-    .typing{display:flex;gap:5px;padding:7px 0}
-    .typing i{width:6px;height:6px;border-radius:50%;background:#a78e8e;animation:bounce 1s infinite}
-    .typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
-    @keyframes bounce{0%,70%,100%{transform:translateY(0);opacity:.5}35%{transform:translateY(-5px);opacity:1}}
-    .composer-area{padding:12px 25px 18px;background:linear-gradient(transparent,#f7f7f8 18%)}
-    .composer-shell{width:min(820px,100%);margin:0 auto;background:#fff;border:1px solid #e6dddd;border-radius:16px;box-shadow:var(--shadow);padding:10px 11px 8px;transition:border-color .2s}
-    .composer-shell:focus-within{border-color:#c9a4a4}
-    .composer-shell textarea{display:block;width:100%;border:0;outline:0;resize:none;min-height:34px;max-height:150px;padding:7px 8px;color:var(--text);font-size:13px;line-height:1.6;background:transparent}
-    .composer-shell textarea::placeholder{color:#a79b9b}
-    .composer-bottom{display:flex;align-items:center;justify-content:space-between;padding:3px 2px 0}
-    .composer-hint{font-size:10px;color:#a59a9a}
-    .composer-controls{display:flex;align-items:center;gap:8px}
-    select{border:0;background:transparent;color:#786c6c;font-size:10px;outline:0;max-width:110px}
-    .send-btn{width:34px;height:34px;border:0;border-radius:10px;background:var(--brand);color:#fff;font-size:16px;display:grid;place-items:center}
-    .send-btn:hover{background:var(--brand-hover)}
-    .send-btn:disabled{opacity:.45;cursor:not-allowed}
-    .footer-note{text-align:center;font-size:10px;color:#aaa0a0;padding-top:8px}
-    .modal-backdrop{position:fixed;inset:0;background:rgba(24,10,10,.35);display:none;align-items:center;justify-content:center;z-index:80;padding:18px}
-    .modal-backdrop.open{display:flex}
-    .modal{width:min(430px,100%);background:#fff;border-radius:16px;padding:21px;box-shadow:0 20px 70px rgba(0,0,0,.18)}
-    .modal h2{font-size:17px;margin:0 0 7px}
-    .modal p{font-size:12px;color:var(--muted);line-height:1.6;margin:0 0 14px}
-    .modal textarea,.modal input{width:100%;border:1px solid var(--border);border-radius:10px;padding:11px;outline:0;font-size:12px;color:var(--text);resize:vertical}
-    .modal textarea:focus,.modal input:focus{border-color:#c9a4a4}
-    .modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:15px}
-    .modal-btn{border:1px solid var(--border);background:#fff;border-radius:9px;padding:9px 13px;font-size:11px;color:#655a5a}
-    .modal-btn.primary{background:var(--brand);color:#fff;border-color:var(--brand)}
-    .toast{position:fixed;bottom:22px;left:50%;transform:translate(-50%,15px);background:#2d2222;color:#fff;padding:10px 15px;border-radius:9px;font-size:11px;opacity:0;pointer-events:none;transition:.2s;z-index:100}
-    .toast.show{opacity:1;transform:translate(-50%,0)}
-    .overlay{display:none}
-    @media(max-width:760px){
-      .sidebar{position:fixed;inset:0 auto 0 0;transform:translateX(-100%);box-shadow:none}
-      .sidebar.open{transform:translateX(0);box-shadow:12px 0 40px rgba(0,0,0,.12)}
-      .overlay.show{display:block;position:fixed;inset:0;background:rgba(30,15,15,.25);z-index:20}
-      .mobile-menu{display:grid;place-items:center;width:34px;height:34px;border:1px solid var(--border);background:#fff;border-radius:9px;color:var(--brand)}
-      .topbar{padding:0 14px}
-      .chat-content{padding:25px 17px}
-      .composer-area{padding:9px 12px 12px}
-      .status{display:none}
-      .top-btn{padding:7px 9px}
-      .welcome{padding:20px 0 55px}
-    }
-    @media(max-width:430px){
-      .suggestions{grid-template-columns:1fr}
-      .top-actions .top-btn:first-child{display:none}
-      .composer-hint{display:none}
-      .message{gap:9px}
-      .avatar{width:27px;height:27px;flex-basis:27px}
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#4d1616">
+<title>SSP AI — Saksham Study Point</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1d1a1a;--muted:#6f6767;--line:#e7e2e0;--bg:#fbfaf9;--card:#fff;--brand:#4d1616;--brand-2:#651f1f;--tint:#f4ecec;--err:#a32b2b;--side:272px}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{font:15px/1.6 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.app{display:flex;height:100dvh;overflow:hidden}
+.side{width:var(--side);flex:none;background:var(--card);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:16px 12px;z-index:30;transition:transform .2s}
+.brand{display:flex;gap:10px;align-items:center;padding:2px 6px 16px}
+.mark{width:34px;height:34px;border-radius:9px;background:var(--brand);color:#fff;display:grid;place-items:center;font-size:12px;font-weight:600;flex:none}
+.brand b{display:block;font-weight:600;font-size:14px;line-height:1.2}
+.brand small{color:var(--muted);font-size:12px}
+.btn{border:1px solid var(--line);background:var(--card);border-radius:9px;padding:8px 12px;font-size:13px}
+.btn:hover{background:var(--tint)}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn.primary:hover{background:var(--brand-2)}
+.btn.danger{color:var(--err);border-color:#e6c4c4}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.new{width:100%;padding:10px;font-weight:500}
+.search{margin:14px 0 6px}
+.search input{width:100%;border:1px solid var(--line);border-radius:9px;padding:8px 10px;font-size:13px;background:var(--bg)}
+.list{flex:1;min-height:0;overflow-y:auto;margin:0 -4px;padding:0 4px}
+.group{font-size:12px;color:var(--muted);padding:12px 8px 4px}
+.item{display:flex;align-items:center;border-radius:8px}
+.item:hover,.item.on{background:var(--tint)}
+.item .open{flex:1;min-width:0;text-align:left;border:0;background:none;padding:8px;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item.on .open{color:var(--brand);font-weight:500}
+.item .more{border:0;background:none;width:30px;height:30px;color:var(--muted);border-radius:6px;opacity:0}
+.item:hover .more,.item .more:focus-visible{opacity:1}
+.empty{color:var(--muted);font-size:13px;padding:20px 8px}
+.foot{border-top:1px solid var(--line);margin-top:10px;padding-top:10px;display:grid;gap:2px}
+.foot button{border:0;background:none;text-align:left;padding:8px;border-radius:8px;font-size:13px;color:#4a4343}
+.foot button:hover{background:var(--tint);color:var(--brand)}
+.foot p{margin:6px 8px 0;font-size:12px;color:var(--muted)}
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.top{height:60px;flex:none;display:flex;align-items:center;gap:10px;padding:0 20px;border-bottom:1px solid var(--line)}
+.menu{display:none}
+.ttl{min-width:0;flex:1}
+.ttl b,.ttl small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ttl b{font-weight:600;font-size:14px}
+.ttl small{font-size:12px;color:var(--muted)}
+.scroll{flex:1;min-height:0;overflow-y:auto}
+.col{max-width:760px;margin:0 auto;padding:28px 20px 12px}
+.hello{padding:7vh 0 0}
+.hello h1{font-size:clamp(26px,4vw,34px);line-height:1.2;letter-spacing:-.02em;font-weight:600;margin:0 0 8px}
+.hello p{color:var(--muted);margin:0;max-width:52ch}
+.resume{margin-top:20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:14px;color:var(--muted)}
+.try{margin-top:26px;border-top:1px solid var(--line)}
+.try button{display:block;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--line);padding:14px 2px;font-size:15px}
+.try button:hover{color:var(--brand)}
+.try span{display:block;color:var(--muted);font-size:13px}
+.msg{margin:0 0 22px;display:flex;gap:12px}
+.msg.user{justify-content:flex-end}
+.bub{background:var(--tint);border-radius:14px 14px 4px 14px;padding:10px 14px;max-width:85%;white-space:pre-wrap;overflow-wrap:anywhere}
+.av{width:28px;height:28px;border-radius:8px;background:var(--brand);color:#fff;font-size:10px;font-weight:600;display:grid;place-items:center;flex:none;margin-top:2px}
+.ai-body{min-width:0;flex:1;overflow-wrap:anywhere}
+.md>*:first-child{margin-top:0}.md>*:last-child{margin-bottom:0}
+.md p{margin:0 0 .7em}
+.md ul,.md ol{margin:0 0 .7em;padding-left:1.3em}
+.md li{margin:.2em 0}
+.md h4{margin:1em 0 .4em;font-size:15px;font-weight:600}
+.md code{background:var(--tint);padding:1px 5px;border-radius:5px;font-size:.92em}
+.acts{margin-top:6px}
+.acts button{border:0;background:none;color:var(--muted);font-size:12px;padding:2px 0}
+.acts button:hover{color:var(--brand)}
+.dots{display:flex;gap:5px;padding:10px 0}
+.dots i{width:6px;height:6px;border-radius:50%;background:var(--muted);animation:b 1s infinite}
+.dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
+@keyframes b{0%,70%,100%{opacity:.35;transform:none}35%{opacity:1;transform:translateY(-4px)}}
+.err{color:var(--err);font-size:14px}
+.dock{padding:8px 20px 14px}
+.box{max-width:760px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 10px 8px}
+.box:focus-within{border-color:var(--brand)}
+.box textarea{display:block;width:100%;border:0;outline:0;resize:none;background:none;min-height:28px;max-height:160px;padding:4px 6px;line-height:1.55}
+.box textarea::placeholder{color:#9a9191}
+.row{display:flex;align-items:center;gap:6px;margin-top:6px}
+.row select{border:1px solid var(--line);border-radius:8px;background:var(--bg);font-size:12px;padding:5px 6px;max-width:110px}
+.sp{flex:1}
+.send{width:36px;height:36px;border:0;border-radius:10px;background:var(--brand);color:#fff;display:grid;place-items:center}
+.send:hover{background:var(--brand-2)}
+.send:disabled{opacity:.4;cursor:not-allowed}
+.note{text-align:center;font-size:12px;color:var(--muted);margin-top:8px}
+dialog{border:0;border-radius:14px;padding:20px;width:min(440px,calc(100% - 32px));box-shadow:0 18px 60px rgba(0,0,0,.2)}
+dialog::backdrop{background:rgba(25,12,12,.4)}
+dialog h2{margin:0 0 6px;font-size:17px;font-weight:600}
+dialog p{margin:0 0 14px;color:var(--muted);font-size:14px}
+dialog textarea,dialog input[type=text]{width:100%;border:1px solid var(--line);border-radius:9px;padding:10px;font-size:14px;resize:vertical}
+.chk{display:flex;gap:8px;align-items:flex-start;margin-top:12px;font-size:14px}
+.dact{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+.toast{position:fixed;bottom:20px;left:50%;transform:translate(-50%,10px);background:#2a2121;color:#fff;font-size:13px;padding:9px 14px;border-radius:9px;opacity:0;pointer-events:none;transition:.2s;z-index:99}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.shade{display:none}
+@media(max-width:780px){
+.side{position:fixed;inset:0 auto 0 0;transform:translateX(-100%)}
+.side.open{transform:none;box-shadow:10px 0 40px rgba(0,0,0,.15)}
+.shade.on{display:block;position:fixed;inset:0;background:rgba(25,12,12,.3);z-index:20}
+.menu{display:grid;place-items:center;width:36px;height:36px;border:1px solid var(--line);background:var(--card);border-radius:9px}
+.top{padding:0 12px}.col{padding:20px 14px 8px}.dock{padding:6px 10px 10px}
+.row select{max-width:92px}
+.hide-sm{display:none}
+}
+@media(hover:none){.item .more{opacity:1}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
 </head>
 <body>
 <div class="app">
-  <aside class="sidebar" id="sidebar">
-    <div class="brand">
-      <div class="brand-mark">SSP</div>
-      <div><div class="brand-name">Saksham Study Point</div><div class="brand-sub">Your AI study companion</div></div>
-    </div>
-    <button class="new-chat" id="newChatBtn"><span>＋</span> New chat</button>
-    <section class="side-section">
-      <div class="section-heading"><span>Recent conversations</span></div>
-      <div class="search-wrap"><span class="search-icon">⌕</span><input id="historySearch" type="search" placeholder="Search chats..."></div>
-      <div class="history-list" id="historyList"></div>
-    </section>
-    <div class="side-bottom">
-      <button class="side-action" id="memoryBtn"><span>✧</span> Personal memory</button>
-      <button class="side-action" id="clearHistoryBtn"><span>⌫</span> Clear all conversations</button>
-      <div class="privacy-note">Your chats and memory are saved in this browser on this device.</div>
+  <aside class="side" id="side">
+    <div class="brand"><div class="mark">SSP</div><div><b>Saksham Study Point</b><small>SSP AI</small></div></div>
+    <button class="btn primary new" id="newBtn">New chat</button>
+    <div class="search"><input id="q" type="search" placeholder="Search chats" aria-label="Search chats"></div>
+    <div class="list" id="list"></div>
+    <div class="foot">
+      <button id="memBtn">Memory</button>
+      <button id="clearBtn">Clear all chats</button>
+      <p>Chats save in this browser, on this device.</p>
     </div>
   </aside>
-  <div class="overlay" id="overlay"></div>
+  <div class="shade" id="shade"></div>
   <main class="main">
-    <header class="topbar">
-      <div class="top-left">
-        <button class="mobile-menu" id="menuBtn" aria-label="Open sidebar">☰</button>
-        <div><div class="page-title" id="currentTitle">New conversation</div><div class="status"><span class="status-dot"></span> SSP AI is ready</div></div>
-      </div>
-      <div class="top-actions">
-        <button class="top-btn" id="renameTopBtn">Rename chat</button>
-        <button class="top-btn" id="memoryTopBtn">Memory</button>
-      </div>
+    <header class="top">
+      <button class="menu" id="menuBtn" aria-label="Open chats">☰</button>
+      <div class="ttl"><b id="title">New chat</b><small id="mem"></small></div>
+      <button class="btn hide-sm" id="renBtn">Rename</button>
+      <button class="btn" id="memTop">Memory</button>
     </header>
-    <section class="chat-scroll" id="chatScroll">
-      <div class="chat-content" id="chatContent"></div>
-    </section>
-    <section class="composer-area">
-      <div class="composer-shell">
-        <textarea id="questionInput" rows="1" placeholder="Ask SSP AI anything..."></textarea>
-        <div class="composer-bottom">
-          <span class="composer-hint">Enter to send · Shift + Enter for a new line</span>
-          <div class="composer-controls">
-            <select id="languageSelect" aria-label="Response language">
-              <option value="hinglish">Hinglish</option><option value="hindi">Hindi</option><option value="english">English</option>
-            </select>
-            <button class="send-btn" id="sendBtn" aria-label="Send message">↑</button>
-          </div>
+    <div class="scroll" id="scroll" role="log" aria-live="polite"><div class="col" id="col"></div></div>
+    <div class="dock">
+      <div class="box">
+        <textarea id="inp" rows="1" placeholder="Apna doubt likho…" aria-label="Your question"></textarea>
+        <div class="row">
+          <select id="selGrade" aria-label="Class"></select>
+          <select id="selSub" aria-label="Subject"></select>
+          <select id="selLang" aria-label="Reply language"></select>
+          <span class="sp"></span>
+          <button class="send" id="sendBtn" aria-label="Send"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
         </div>
       </div>
-      <div class="footer-note">SSP AI can make mistakes. Verify important information.</div>
-    </section>
+      <div class="note">SSP AI galti kar sakta hai. Zaroori baatein check kar lena.</div>
+    </div>
   </main>
 </div>
-
-<div class="modal-backdrop" id="modalBackdrop">
-  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-    <h2 id="modalTitle"></h2><p id="modalDescription"></p>
-    <div id="modalField"></div>
-    <div class="modal-actions"><button class="modal-btn" id="modalCancel">Cancel</button><button class="modal-btn primary" id="modalSave">Save</button></div>
-  </div>
-</div>
+<dialog id="dlg"><h2 id="dTitle"></h2><p id="dDesc"></p><div id="dBody"></div><div class="dact" id="dActs"></div></dialog>
 <div class="toast" id="toast"></div>
-
 <script>
-(() => {
-  "use strict";
-  const STORAGE_KEY = "ssp_ai_conversations_v2";
-  const MEMORY_KEY = "ssp_ai_memory_v1";
-  const MAX_CHATS = 100;
-  const MAX_MESSAGES = 80;
-
-  const $ = (id) => document.getElementById(id);
-  const chatContent = $("chatContent");
-  const questionInput = $("questionInput");
-  const sendBtn = $("sendBtn");
-  let conversations = loadJSON(STORAGE_KEY, []);
-  let personalMemory = localStorage.getItem(MEMORY_KEY) || "";
-  let activeId = null;
-  let isSending = false;
-  let modalSaveHandler = null;
-
-  function loadJSON(key, fallback) {
-    try { const value = JSON.parse(localStorage.getItem(key) || "null"); return Array.isArray(value) ? value : fallback; }
-    catch { return fallback; }
-  }
-  function saveAll() {
-    try {
-      conversations = conversations.slice(0, MAX_CHATS);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(conversations));
-      localStorage.setItem(MEMORY_KEY, personalMemory);
-    } catch (error) {
-      showToast("Browser storage is full. Remove some old chats.");
-    }
-  }
-  function uid() { return (crypto.randomUUID ? crypto.randomUUID() : Date.now() + "-" + Math.random().toString(16).slice(2)); }
-  function activeChat() { return conversations.find(c => c.id === activeId) || null; }
-  function createChat() {
-    const chat = { id: uid(), title: "New conversation", createdAt: Date.now(), updatedAt: Date.now(), messages: [] };
-    conversations.unshift(chat); activeId = chat.id; saveAll(); renderAll(); closeSidebar(); questionInput.focus();
-  }
-  function titleFrom(text) {
-    const clean = text.replace(/\s+/g, " ").trim();
-    return clean.length > 38 ? clean.slice(0, 38) + "…" : (clean || "New conversation");
-  }
-  function formatTime(timestamp) {
-    return new Date(timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-  }
-  function showToast(message) {
-    const toast = $("toast"); toast.textContent = message; toast.classList.add("show");
-    clearTimeout(showToast.timer); showToast.timer = setTimeout(() => toast.classList.remove("show"), 2200);
-  }
-  function closeSidebar() { $("sidebar").classList.remove("open"); $("overlay").classList.remove("show"); }
-  function renderHistory() {
-    const list = $("historyList"); const query = $("historySearch").value.trim().toLowerCase();
-    list.innerHTML = "";
-    const matches = conversations.filter(c => c.title.toLowerCase().includes(query) || c.messages.some(m => m.text.toLowerCase().includes(query)));
-    if (!matches.length) {
-      const empty = document.createElement("div"); empty.className = "history-empty";
-      empty.textContent = query ? "No matching conversations." : "Your conversations will appear here.";
-      list.appendChild(empty); return;
-    }
-    matches.forEach(c => {
-      const item = document.createElement("div"); item.className = "history-item" + (c.id === activeId ? " active" : "");
-      const open = document.createElement("button"); open.className = "history-open"; open.textContent = c.title; open.title = c.title;
-      open.addEventListener("click", () => { activeId = c.id; renderAll(); closeSidebar(); });
-      const menu = document.createElement("button"); menu.className = "history-menu"; menu.textContent = "•••"; menu.title = "Conversation options";
-      menu.addEventListener("click", () => openChatMenu(c.id));
-      item.append(open, menu); list.appendChild(item);
-    });
-  }
-  function renderWelcome() {
-    const wrap = document.createElement("div"); wrap.className = "welcome";
-    const logo = document.createElement("div"); logo.className = "welcome-logo"; logo.textContent = "SSP";
-    const heading = document.createElement("h1"); heading.append("Learn better with "); const span = document.createElement("span"); span.textContent = "SSP AI"; heading.append(span);
-    const p = document.createElement("p"); p.textContent = "Your study companion for clear explanations, exam preparation and everyday questions. What would you like to learn today?";
-    const suggestions = document.createElement("div"); suggestions.className = "suggestions";
-    [["Explain a concept","Explain a difficult topic in simple words."],["Solve a question","Help me solve a question step by step."],["Prepare for exams","Make a focused revision plan for my next exam."],["Practice my skills","Give me practice questions on a topic I choose."]].forEach(([title, prompt]) => {
-      const btn = document.createElement("button"); btn.className = "suggestion";
-      const strong = document.createElement("strong"); strong.textContent = title;
-      btn.append(strong, document.createTextNode(prompt)); btn.addEventListener("click", () => { questionInput.value = prompt; autoResize(); questionInput.focus(); }); suggestions.appendChild(btn);
-    });
-    wrap.append(logo, heading, p, suggestions); chatContent.appendChild(wrap);
-  }
-  function appendMessage(message) {
-    const row = document.createElement("article"); row.className = "message " + message.role;
-    const avatar = document.createElement("div"); avatar.className = "avatar"; avatar.textContent = message.role === "user" ? "YOU" : "SSP";
-    const body = document.createElement("div"); body.className = "message-body";
-    const author = document.createElement("div"); author.className = "message-author"; author.textContent = message.role === "user" ? "You" : "SSP AI";
-    const text = document.createElement("div"); text.className = "message-text"; text.textContent = message.text;
-    body.append(author, text);
-    if (message.role === "ai") {
-      const tools = document.createElement("div"); tools.className = "message-tools";
-      const copy = document.createElement("button"); copy.className = "message-tool"; copy.textContent = "Copy";
-      copy.addEventListener("click", async () => { try { await navigator.clipboard.writeText(message.text); showToast("Copied to clipboard"); } catch { showToast("Could not copy this message"); } });
-      tools.appendChild(copy); body.appendChild(tools);
-    }
-    row.append(avatar, body); chatContent.appendChild(row);
-  }
-  function renderChat() {
-    chatContent.innerHTML = "";
-    const chat = activeChat();
-    if (!chat || !chat.messages.length) { renderWelcome(); return; }
-    chat.messages.forEach(appendMessage);
-    scrollToBottom();
-  }
-  function renderAll() {
-    const chat = activeChat();
-    $("currentTitle").textContent = chat ? chat.title : "New conversation";
-    $("renameTopBtn").disabled = !chat;
-    renderHistory(); renderChat();
-  }
-  function scrollToBottom() { $("chatScroll").scrollTop = $("chatScroll").scrollHeight; }
-  function autoResize() { questionInput.style.height = "auto"; questionInput.style.height = Math.min(questionInput.scrollHeight, 150) + "px"; }
-  function showTyping() {
-    const row = document.createElement("article"); row.className = "message ai"; row.id = "typingRow";
-    const avatar = document.createElement("div"); avatar.className = "avatar"; avatar.textContent = "SSP";
-    const body = document.createElement("div"); body.className = "message-body";
-    const author = document.createElement("div"); author.className = "message-author"; author.textContent = "SSP AI";
-    const dots = document.createElement("div"); dots.className = "typing"; dots.innerHTML = "<i></i><i></i><i></i>";
-    body.append(author, dots); row.append(avatar, body); chatContent.appendChild(row); scrollToBottom();
-  }
-  function removeTyping() { const row = $("typingRow"); if (row) row.remove(); }
-  function addMessageToChat(role, text) {
-    const chat = activeChat(); if (!chat) return;
-    chat.messages.push({ role, text, timestamp: Date.now() });
-    chat.messages = chat.messages.slice(-MAX_MESSAGES);
-    chat.updatedAt = Date.now();
-    if (role === "user" && (chat.title === "New conversation" || !chat.title)) chat.title = titleFrom(text);
-    saveAll(); renderHistory(); $("currentTitle").textContent = chat.title; appendMessage({ role, text }); scrollToBottom();
-  }
-  function buildCrossChatContext() {
-    const otherMessages = conversations.filter(c => c.id !== activeId)
-      .sort((a,b) => b.updatedAt - a.updatedAt)
-      .flatMap(c => c.messages.slice(-4).map(m => ({ ...m, chatTitle: c.title, chatUpdatedAt: c.updatedAt })))
-      .sort((a,b) => b.timestamp - a.timestamp).slice(0, 14).reverse();
-    return otherMessages.map(m => `${m.role === "user" ? "Student" : "SSP AI"} (${m.chatTitle}): ${m.text.slice(0, 700)}`).join("\n");
-  }
-  async function ask() {
-    const message = questionInput.value.trim();
-    if (!message || isSending) return;
-    if (!activeChat()) {
-      const chat = { id: uid(), title: "New conversation", createdAt: Date.now(), updatedAt: Date.now(), messages: [] };
-      conversations.unshift(chat); activeId = chat.id;
-    }
-    const chat = activeChat();
-    const previousMessages = chat.messages.slice(-16).map(m => ({ role: m.role === "ai" ? "model" : "user", text: m.text }));
-    addMessageToChat("user", message);
-    questionInput.value = ""; autoResize(); isSending = true; sendBtn.disabled = true; showTyping();
-    try {
-      const response = await fetch("/.netlify/functions/ask", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          message, history: previousMessages, crossChatContext: buildCrossChatContext(),
-          memory: personalMemory, language: $("languageSelect").value
-        })
-      });
-      let data = {}; try { data = await response.json(); } catch {}
-      if (!response.ok) throw new Error(data.reply || `Request failed (${response.status})`);
-      removeTyping(); addMessageToChat("ai", data.reply || "I couldn't generate a reply. Please try again.");
-    } catch (error) {
-      removeTyping(); addMessageToChat("ai", error.message || "Network issue. Please try again.");
-    } finally {
-      isSending = false; sendBtn.disabled = false; questionInput.focus();
-    }
-  }
-  function openModal(title, description, field, initialValue, onSave) {
-    $("modalTitle").textContent = title; $("modalDescription").textContent = description;
-    const holder = $("modalField"); holder.innerHTML = "";
-    const input = document.createElement(field === "textarea" ? "textarea" : "input");
-    if (field === "textarea") { input.rows = 7; input.maxLength = 5000; } else input.type = "text";
-    input.value = initialValue || ""; holder.appendChild(input);
-    $("modalBackdrop").classList.add("open"); input.focus(); modalSaveHandler = () => onSave(input.value);
-  }
-  function closeModal() { $("modalBackdrop").classList.remove("open"); modalSaveHandler = null; }
-  function renameChat(id = activeId) {
-    const chat = conversations.find(c => c.id === id); if (!chat) return;
-    openModal("Rename conversation", "Choose a short name that helps you find this chat later.", "input", chat.title, value => {
-      const title = value.trim(); if (!title) return showToast("Chat name cannot be empty.");
-      chat.title = title.slice(0, 70); saveAll(); renderAll(); closeModal();
-    });
-  }
-  function openChatMenu(id) {
-    const chat = conversations.find(c => c.id === id); if (!chat) return;
-    openModal("Conversation options", `Rename or delete “${chat.title}”.`, "input", chat.title, value => {
-      const title = value.trim(); if (!title) return showToast("Chat name cannot be empty.");
-      chat.title = title.slice(0, 70); saveAll(); renderAll(); closeModal();
-    });
-    $("modalDescription").textContent = "Edit the conversation name. To delete it, use the button below.";
-    const deleteBtn = document.createElement("button"); deleteBtn.className = "modal-btn"; deleteBtn.textContent = "Delete conversation";
-    deleteBtn.style.marginTop = "10px"; deleteBtn.style.borderColor = "#e5baba"; deleteBtn.style.color = "#9b3333";
-    deleteBtn.addEventListener("click", () => {
-      conversations = conversations.filter(c => c.id !== id);
-      if (activeId === id) activeId = conversations[0]?.id || null;
-      saveAll(); renderAll(); closeModal(); showToast("Conversation deleted");
-    });
-    $("modalField").appendChild(deleteBtn);
-  }
-  function editMemory() {
-    openModal("Personal memory", "Add details SSP AI should consider across your conversations, such as your study level, goals, preferred explanation style or ongoing projects. This stays in this browser.", "textarea", personalMemory, value => {
-      personalMemory = value.trim().slice(0, 5000); saveAll(); closeModal(); showToast("Personal memory saved");
-    });
-  }
-
-  $("newChatBtn").addEventListener("click", createChat);
-  $("sendBtn").addEventListener("click", ask);
-  questionInput.addEventListener("input", autoResize);
-  questionInput.addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); ask(); } });
-  $("historySearch").addEventListener("input", renderHistory);
-  $("renameTopBtn").addEventListener("click", () => renameChat());
-  $("memoryBtn").addEventListener("click", editMemory);
-  $("memoryTopBtn").addEventListener("click", editMemory);
-  $("clearHistoryBtn").addEventListener("click", () => {
-    openModal("Clear all conversations?", "This permanently removes all chat history saved in this browser. Your personal memory notes will remain.", "input", "", value => {
-      if (value.trim().toLowerCase() !== "delete") return showToast('Type "delete" in the field to confirm.');
-      conversations = []; activeId = null; saveAll(); renderAll(); closeModal(); showToast("All conversations cleared");
-    });
-    $("modalDescription").textContent = 'This permanently removes all saved chats. Type "delete" below to confirm. Your personal memory notes will remain.';
+(()=>{
+"use strict";
+const K={chats:"ssp_ai_conversations_v2",mem:"ssp_ai_memory_v1",prefs:"ssp_ai_prefs_v1"};
+const $=id=>document.getElementById(id);
+const read=(k,d)=>{try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch{return d}};
+let chats=read(K.chats,[]);if(!Array.isArray(chats))chats=[];
+let notes=localStorage.getItem(K.mem)||"";
+let prefs=Object.assign({grade:"",subject:"",language:"hinglish",useEarlier:true},read(K.prefs,{}));
+const sorted=()=>[...chats].sort((a,b)=>b.updatedAt-a.updatedAt);
+let activeId=sorted().find(c=>c.messages&&c.messages.length)?.id||null,busy=false;
+const active=()=>chats.find(c=>c.id===activeId)||null;
+const uid=()=>crypto.randomUUID?crypto.randomUUID():Date.now()+"-"+Math.random().toString(16).slice(2);
+const mkTitle=t=>{t=t.replace(/\s+/g," ").trim();return t.length>40?t.slice(0,40)+"…":t||"New chat"};
+function save(){try{chats=chats.slice(0,100);localStorage.setItem(K.chats,JSON.stringify(chats));localStorage.setItem(K.mem,notes);localStorage.setItem(K.prefs,JSON.stringify(prefs))}catch{toast("Storage is full. Delete some old chats.")}}
+function toast(m){const t=$("toast");t.textContent=m;t.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove("show"),2000)}
+function md(src){
+  const esc=s=>s.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+  const inl=s=>esc(s).replace(/`([^`]+)`/g,"<code>$1</code>").replace(/\*\*([^*]+)\*\*/g,"<strong>$1</strong>").replace(/(^|[^*])\*([^*\n]+)\*/g,"$1<em>$2</em>");
+  const out=[];let list=null;const end=()=>{if(list){out.push("</"+list+">");list=null}};
+  String(src).split("\n").forEach(line=>{
+    let m;
+    if(m=line.match(/^\s*[-*•]\s+(.*)/)){if(list!=="ul"){end();out.push("<ul>");list="ul"}out.push("<li>"+inl(m[1])+"</li>")}
+    else if(m=line.match(/^\s*\d+[.)]\s+(.*)/)){if(list!=="ol"){end();out.push("<ol>");list="ol"}out.push("<li>"+inl(m[1])+"</li>")}
+    else if(m=line.match(/^#{1,4}\s+(.*)/)){end();out.push("<h4>"+inl(m[1])+"</h4>")}
+    else if(!line.trim())end();
+    else{end();out.push("<p>"+inl(line)+"</p>")}
   });
-  $("modalCancel").addEventListener("click", closeModal);
-  $("modalSave").addEventListener("click", () => { if (modalSaveHandler) modalSaveHandler(); });
-  $("modalBackdrop").addEventListener("click", e => { if (e.target === $("modalBackdrop")) closeModal(); });
-  $("menuBtn").addEventListener("click", () => { $("sidebar").classList.add("open"); $("overlay").classList.add("show"); });
-  $("overlay").addEventListener("click", closeSidebar);
-
-  if (conversations.length) activeId = conversations[0].id;
-  renderAll();
+  end();return out.join("");
+}
+const dayLabel=t=>{const d=Math.round((new Date().setHours(0,0,0,0)-new Date(t).setHours(0,0,0,0))/864e5);return d<1?"Today":d<2?"Yesterday":"Earlier"};
+function renderList(){
+  const q=$("q").value.trim().toLowerCase(),el=$("list");el.innerHTML="";
+  const rows=sorted().filter(c=>c.messages.length&&(!q||c.title.toLowerCase().includes(q)||c.messages.some(m=>m.text.toLowerCase().includes(q))));
+  if(!rows.length){el.innerHTML='<div class="empty">'+(q?"No matching chats.":"Your chats will show up here.")+"</div>";return}
+  let g="";
+  rows.forEach(c=>{
+    const lab=dayLabel(c.updatedAt);
+    if(lab!==g){g=lab;const h=document.createElement("div");h.className="group";h.textContent=g;el.append(h)}
+    const it=document.createElement("div");it.className="item"+(c.id===activeId?" on":"");
+    const o=document.createElement("button");o.className="open";o.textContent=c.title;o.title=c.title;
+    o.onclick=()=>{activeId=c.id;renderAll();closeSide()};
+    const m=document.createElement("button");m.className="more";m.textContent="⋯";m.setAttribute("aria-label","Chat options");m.onclick=()=>chatOptions(c.id);
+    it.append(o,m);el.append(it);
+  });
+}
+const TRY=[["Concept","Newton ke teeno laws simple words mein samjhao"],["Maths","x² − 5x + 6 = 0 ko step by step solve karo"],["Exam","Class 10 board exam ke liye 7 din ka revision plan banao"],["Practice","Photosynthesis par 5 practice questions do"]];
+function welcome(){
+  const w=document.createElement("div");w.className="hello";
+  w.innerHTML="<h1>Aaj kya samajhna hai?</h1><p>Doubt likho. Main step by step, simple words mein samjhaunga, aur pichli baatein yaad rakhunga.</p>";
+  const last=sorted().find(c=>c.messages.length);
+  if(last){const r=document.createElement("div");r.className="resume";r.append("Pichli chat: "+last.title);const b=document.createElement("button");b.className="btn";b.textContent="Continue";b.onclick=()=>{activeId=last.id;renderAll()};r.append(b);w.append(r)}
+  const t=document.createElement("div");t.className="try";
+  TRY.forEach(([l,p])=>{const b=document.createElement("button");const s=document.createElement("span");s.textContent=l;b.append(s,p);b.onclick=()=>{$("inp").value=p;fit();$("inp").focus()};t.append(b)});
+  w.append(t);$("col").append(w);
+}
+function row(m){
+  const r=document.createElement("article");r.className="msg "+m.role;
+  if(m.role==="user"){const b=document.createElement("div");b.className="bub";b.textContent=m.text;r.append(b);return r}
+  const t=document.createElement("div");t.className="md";t.innerHTML=md(m.text);
+  const cp=document.createElement("button");cp.textContent="Copy";
+  cp.onclick=async()=>{try{await navigator.clipboard.writeText(m.text);toast("Copied")}catch{toast("Could not copy")}};
+  const acts=document.createElement("div");acts.className="acts";acts.append(cp);
+  return ai([t,acts],r);
+}
+function ai(parts,r){
+  r=r||Object.assign(document.createElement("article"),{className:"msg ai"});
+  const a=document.createElement("div");a.className="av";a.textContent="SSP";
+  const b=document.createElement("div");b.className="ai-body";b.append(...parts);r.append(a,b);return r;
+}
+function typing(){const d=document.createElement("div");d.className="dots";d.innerHTML="<i></i><i></i><i></i>";return ai([d])}
+function errRow(msg,retry){
+  const p=document.createElement("div");p.className="err";p.textContent=msg;
+  const b=document.createElement("button");b.className="btn";b.textContent="Try again";b.style.marginTop="8px";b.onclick=retry;
+  return ai([p,b]);
+}
+function renderChat(extra){
+  const col=$("col");col.innerHTML="";const c=active();
+  if(!c||!c.messages.length){welcome();return}
+  c.messages.forEach(m=>col.append(row(m)));
+  if(extra)col.append(extra);
+  $("scroll").scrollTop=$("scroll").scrollHeight;
+}
+function memStatus(){
+  const n=chats.filter(c=>c.id!==activeId&&c.messages.length).length,p=["this chat"];
+  if(prefs.useEarlier&&n)p.push(n+" earlier chat"+(n>1?"s":""));
+  if(notes.trim())p.push("your notes");
+  $("mem").textContent="Remembers "+p.join(", ");
+}
+function renderAll(){
+  const c=active();$("title").textContent=c?c.title:"New chat";$("renBtn").disabled=!c;
+  renderList();renderChat();memStatus();
+}
+function earlierContext(){
+  if(!prefs.useEarlier)return"";
+  return sorted().filter(c=>c.id!==activeId&&c.messages.length).slice(0,6)
+    .flatMap(c=>c.messages.slice(-4).map(m=>({t:m.timestamp||c.updatedAt,s:(m.role==="user"?"Student":"SSP AI")+" ("+c.title+"): "+m.text.slice(0,500)})))
+    .sort((a,b)=>b.t-a.t).slice(0,14).reverse().map(x=>x.s).join("\n");
+}
+async function send(text,retry){
+  if(busy)return;
+  let c=active();
+  if(!c){c={id:uid(),title:"New chat",createdAt:Date.now(),updatedAt:Date.now(),messages:[]};chats.unshift(c);activeId=c.id}
+  if(!retry){
+    c.messages.push({role:"user",text,timestamp:Date.now()});
+    c.messages=c.messages.slice(-80);c.updatedAt=Date.now();
+    if(c.title==="New chat")c.title=mkTitle(text);
+    save();
+  }
+  $("title").textContent=c.title;busy=true;$("sendBtn").disabled=true;
+  renderList();renderChat(typing());memStatus();
+  const history=c.messages.slice(0,-1).slice(-16).map(m=>({role:m.role==="ai"?"model":"user",text:m.text}));
+  try{
+    const res=await fetch("/.netlify/functions/ask",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({message:text,history,crossChatContext:earlierContext(),memory:notes,language:prefs.language,grade:prefs.grade,subject:prefs.subject})});
+    let data={};try{data=await res.json()}catch{}
+    if(!res.ok||!data.reply)throw new Error(data.reply||"Server se jawab nahi aaya ("+res.status+").");
+    c.messages.push({role:"ai",text:data.reply,timestamp:Date.now()});c.updatedAt=Date.now();save();renderAll();
+  }catch(e){
+    renderChat(errRow(e instanceof TypeError?"Network problem. Internet check karke dobara try karo.":e.message,()=>send(text,true)));
+  }finally{busy=false;$("sendBtn").disabled=false;$("inp").focus()}
+}
+const fit=()=>{const i=$("inp");i.style.height="auto";i.style.height=Math.min(i.scrollHeight,160)+"px"};
+function submit(){const t=$("inp").value.trim();if(!t||busy)return;$("inp").value="";fit();send(t)}
+const dlg=$("dlg");
+function openDlg({title,desc,field,value,extra,actions}){
+  $("dTitle").textContent=title;$("dDesc").textContent=desc||"";
+  const b=$("dBody");b.innerHTML="";let f=null;
+  if(field){f=document.createElement(field==="area"?"textarea":"input");if(field==="area"){f.rows=7;f.maxLength=2000}else{f.type="text";f.maxLength=70}f.value=value||"";b.append(f)}
+  if(extra)b.append(extra);
+  const a=$("dActs");a.innerHTML="";
+  [{label:"Cancel",fn:()=>true},...actions].forEach(x=>{
+    const k=document.createElement("button");k.type="button";k.className="btn "+(x.kind||"");k.textContent=x.label;
+    k.onclick=()=>{if(x.fn(f&&f.value)!==false)dlg.close()};a.append(k);
+  });
+  dlg.showModal();if(f)f.focus();return f;
+}
+function chatOptions(id){
+  const c=chats.find(x=>x.id===id);if(!c)return;
+  openDlg({title:"Rename chat",field:"input",value:c.title,actions:[
+    {label:"Delete chat",kind:"danger",fn:()=>{chats=chats.filter(x=>x.id!==id);if(activeId===id)activeId=sorted()[0]?.id||null;save();renderAll();toast("Chat deleted")}},
+    {label:"Save",kind:"primary",fn:v=>{v=v.trim();if(!v){toast("Name cannot be empty");return false}c.title=v.slice(0,70);save();renderAll()}}]});
+}
+function memory(){
+  const l=document.createElement("label");l.className="chk";
+  const cb=document.createElement("input");cb.type="checkbox";cb.checked=prefs.useEarlier;
+  l.append(cb,"Use my earlier chats as context");
+  const f=openDlg({title:"Memory",desc:"Write what SSP AI should always remember, like your class, weak topics or how you like explanations. It is saved in this browser.",field:"area",value:notes,extra:l,
+    actions:[{label:"Save",kind:"primary",fn:v=>{notes=v.trim().slice(0,2000);prefs.useEarlier=cb.checked;save();memStatus();toast("Memory saved")}}]});
+  f.placeholder="Example: Main class 10 CBSE mein hoon. Fractions weak hain. Short steps pasand hain.";
+}
+const closeSide=()=>{$("side").classList.remove("open");$("shade").classList.remove("on")};
+const sel=(id,key,first,items)=>{
+  const s=$(id);s.innerHTML=(first?'<option value="">'+first+"</option>":"")+items.map(v=>Array.isArray(v)?'<option value="'+v[0]+'">'+v[1]+"</option>":"<option>"+v+"</option>").join("");
+  s.value=prefs[key];s.onchange=()=>{prefs[key]=s.value;save()};
+};
+sel("selGrade","grade","Class",["Class 6","Class 7","Class 8","Class 9","Class 10","Class 11","Class 12","College"]);
+sel("selSub","subject","Subject",["Maths","Science","Physics","Chemistry","Biology","English","Hindi","Social Science","Computer"]);
+sel("selLang","language","",[["hinglish","Hinglish"],["hindi","Hindi"],["english","English"]]);
+$("sendBtn").onclick=submit;
+$("inp").addEventListener("input",fit);
+$("inp").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey&&!e.isComposing&&!matchMedia("(hover:none)").matches){e.preventDefault();submit()}});
+$("newBtn").onclick=()=>{activeId=null;renderAll();closeSide();$("inp").focus()};
+$("q").addEventListener("input",renderList);
+$("renBtn").onclick=()=>active()&&chatOptions(activeId);
+$("memBtn").onclick=$("memTop").onclick=memory;
+$("clearBtn").onclick=()=>openDlg({title:"Clear all chats?",desc:"All chats saved in this browser will be deleted. Your memory notes stay.",actions:[{label:"Clear all",kind:"danger",fn:()=>{chats=[];activeId=null;save();renderAll();toast("All chats cleared")}}]});
+$("menuBtn").onclick=()=>{$("side").classList.add("open");$("shade").classList.add("on")};
+$("shade").onclick=closeSide;
+renderAll();
 })();
 </script>
 </body>
